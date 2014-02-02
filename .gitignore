@@ -1,0 +1,5 @@
+*.yaml
+*.ico
+*.pyc
+stylesheets/*
+templates/*
