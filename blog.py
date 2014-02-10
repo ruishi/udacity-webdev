@@ -23,22 +23,26 @@ class WritePost(BaseHandler):
         self.render('newpost.html')
 
     def post(self):
-        title = self.request.get('title')
-        post = self.request.get('post')
+        title = self.request.get('subject')
+        post = self.request.get('content')
 
         blogpost = BlogPost(title=title, 
-                            post=post,
-                            permalink='1')
+                            post=post)
 
         blogpost.put()
-        self.redirect('/blog')
+        self.redirect('/blog/%s' % blogpost.key().id())
+
+class Post(BaseHandler):
+    def get(self, blog_id):
+        blog_id = int(blog_id)
+        self.render('post.html', post=BlogPost.get_by_id(blog_id))
 
 class BlogPost(db.Model):
     """Datastore entity holding blog posts"""
     title = db.StringProperty(required = True)
     post = db.TextProperty(required = True)
-    permalink = db.StringProperty()
     created = db.DateTimeProperty(auto_now_add = True)
 
-app = webapp2.WSGIApplication([('/blog', Blog),
-                               ('/blog/newpost', WritePost)], debug=True)
+app = webapp2.WSGIApplication([(r'/blog', Blog),
+                               (r'/blog/newpost', WritePost),
+                               (r'/blog/(\d+)', Post)], debug=True)
