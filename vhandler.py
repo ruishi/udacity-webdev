@@ -21,8 +21,9 @@ def hashpw(pw, salt=None):
     pw_hash = hasher.hexdigest()
     return pw_hash, salt
 
-def verifypw(correct_hash, pw, salt):
-    return correct_hash == hashpw(pw, salt)
+def verifypw(correct_hash, salt, pw):
+    new_hash = hashpw(pw, salt)[0]
+    return correct_hash == new_hash
 
 def hash_cookie(cookie_val):
     hasher = SHA256.new()
