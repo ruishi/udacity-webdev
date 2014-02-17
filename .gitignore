@@ -1,5 +1,7 @@
 *.yaml
 *.ico
 *.pyc
-stylesheets/*
-templates/*
+static/
+templates/
+
+main.py
