@@ -80,7 +80,7 @@ class SignUp(BaseHandler):
             user_id = str(new_user.key().id())
             id_cookie = vhandler.hash_cookie(user_id)
             self.response.headers.add_header('Set-Cookie', 
-                                             'user_id=%s' % id_cookie)
+                                             'user_id=%s;Path=/' % id_cookie)
             self.redirect('/welcome')
         else:
             self.render('signup.html', **signup_params)
@@ -101,13 +101,19 @@ class Login(BaseHandler):
                 user_id = str(user.key().id())
                 id_cookie = vhandler.hash_cookie(user_id)
                 self.response.headers.add_header('Set-Cookie', 
-                                                 'user_id=%s' % id_cookie)
+                                                 'user_id=%s;Path=/' % id_cookie)
                 self.redirect('/welcome')
             else:
                 self.render('login.html', username = username)
         else:
             self.render('login.html', username = username)
 
+class Logout(BaseHandler):
+    def get(self):
+        self.response.headers.add_header('Set-Cookie','user_id=;Path=/')
+        self.redirect('/signup')
+
 app = webapp2.WSGIApplication([('/welcome', Welcome),
                                ('/signup', SignUp),
-                               ('/login', Login)], debug=True)
+                               ('/login', Login),
+                               ('/logout', Logout)], debug=True)
