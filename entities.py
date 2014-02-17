@@ -1,7 +1,7 @@
 #!usr/bin/env python
 ################################################################################
 #author: RD Galang
-#Lesson 4
+#Lessons 3, 4
 #An exercise in setting/getting cookies as well as cookie and password hashing.
 ################################################################################
 from google.appengine.ext import db
@@ -22,3 +22,5 @@ class User(db.Model):
     """Datastore entity holding user information"""
     username = db.StringProperty(required = True)
     pw_hash = db.StringProperty(required = True)
+    salt = db.StringProperty(required = True)
+    email = db.StringProperty()

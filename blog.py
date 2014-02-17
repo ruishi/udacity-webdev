@@ -1,7 +1,7 @@
 #!usr/bin/env python
 ################################################################################
 #author: RD Galang
-#Lesson 3,4
+#Lessons 3,4
 #An exercise in using google's datastore as well as more complex URL handling
 #and cookies
 #TODO: -Add error for leaving content and title blank in WritePost
