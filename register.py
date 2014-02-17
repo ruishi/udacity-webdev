@@ -8,8 +8,10 @@
 
 import re
 import webapp2
+from google.appengine.ext import db
 from handler import BaseHandler
 from entities import User
+import vhandler
 
 def validusername(username):
     user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -83,5 +85,29 @@ class SignUp(BaseHandler):
         else:
             self.render('signup.html', **signup_params)
 
+
+class Login(BaseHandler):
+    def get(self):
+        self.render('login.html')
+
+    def post(self):
+        username = self.request.get('username')
+        password = self.request.get('password')
+
+        user = db.GqlQuery("SELECT * FROM User where username = :1", username).get()
+        if user:
+            correct_pw = vhandler.verifypw(user.pw_hash, user.salt, password)
+            if correct_pw:
+                user_id = str(user.key().id())
+                id_cookie = vhandler.hash_cookie(user_id)
+                self.response.headers.add_header('Set-Cookie', 
+                                                 'user_id=%s' % id_cookie)
+                self.redirect('/welcome')
+            else:
+                self.render('login.html', username = username)
+        else:
+            self.render('login.html', username = username)
+
 app = webapp2.WSGIApplication([('/welcome', Welcome),
-                               ('/signup', SignUp)], debug=True)
+                               ('/signup', SignUp),
+                               ('/login', Login)], debug=True)
