@@ -5,3 +5,4 @@ static/
 templates/
 
 main.py
+secret.py

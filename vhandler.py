@@ -8,6 +8,7 @@
 
 from Crypto.Random.random import StrongRandom
 from Crypto.Hash import SHA256
+import secret
 
 def generate_salt():
     rand = StrongRandom()
@@ -27,7 +28,8 @@ def verifypw(correct_hash, salt, pw):
 
 def hash_cookie(cookie_val):
     hasher = SHA256.new()
-    hasher.update(cookie_val)
+    secretcookie = cookie_val + secret.SECRET
+    hasher.update(secretcookie)
     return "%s|%s" % (cookie_val, hasher.hexdigest())
 
 def verify_cookie(cookie):
