@@ -24,3 +24,13 @@ class BaseHandler(webapp2.RequestHandler):
 
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
+
+    def set_cookie(self, **kw):
+        formatted_cookie = ';'.join([key + '=' + val 
+                                     for key, val in kw.items()])
+        self.response.headers.add_header('Set-Cookie', '%s' % formatted_cookie)
+
+    def get_cookie(self, name):
+        return self.request.cookies.get(name)
+
+    

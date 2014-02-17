@@ -29,7 +29,7 @@ class Welcome(BaseHandler):
     """Handles '/welcome'. Welcomes user with their username, redirects
     if there is no username value."""
     def get(self):
-        id_cookie = self.request.cookies.get('user_id')
+        id_cookie = self.get_cookie('user_id')
         if vhandler.verify_cookie(id_cookie):
             user_id = int(id_cookie.split('|')[0])
             user = User.get_by_id(user_id)
@@ -78,9 +78,10 @@ class SignUp(BaseHandler):
                                 salt = salt)
             new_user.put()
             user_id = str(new_user.key().id())
-            id_cookie = vhandler.hash_cookie(user_id)
-            self.response.headers.add_header('Set-Cookie', 
-                                             'user_id=%s;Path=/' % id_cookie)
+            cookie = {}
+            cookie['user_id'] = vhandler.hash_cookie(user_id)
+            cookie['Path'] = '/'
+            self.set_cookie(**cookie)
             self.redirect('/welcome')
         else:
             self.render('signup.html', **signup_params)
@@ -99,9 +100,10 @@ class Login(BaseHandler):
             correct_pw = vhandler.verifypw(user.pw_hash, user.salt, password)
             if correct_pw:
                 user_id = str(user.key().id())
-                id_cookie = vhandler.hash_cookie(user_id)
-                self.response.headers.add_header('Set-Cookie', 
-                                                 'user_id=%s;Path=/' % id_cookie)
+                cookie = {}
+                cookie['user_id'] = vhandler.hash_cookie(user_id)
+                cookie['Path'] = '/'
+                self.set_cookie(**cookie)
                 self.redirect('/welcome')
             else:
                 self.render('login.html', username = username)
