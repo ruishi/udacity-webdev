@@ -35,7 +35,7 @@ class Welcome(BaseHandler):
             user = User.get_by_id(user_id)
             self.render('welcome.html', username = user.username)
         else:
-            self.redirect('/signup')
+            self.redirect('/blog/signup')
 
 class SignUp(BaseHandler):
     """Handles '/signup'. Form ensures a valid username, password and ensures 
@@ -80,9 +80,8 @@ class SignUp(BaseHandler):
             user_id = str(new_user.key().id())
             cookie = {}
             cookie['user_id'] = vhandler.hash_cookie(user_id)
-            cookie['Path'] = '/'
             self.set_cookie(**cookie)
-            self.redirect('/welcome')
+            self.redirect('/blog/welcome')
         else:
             self.render('signup.html', **signup_params)
 
@@ -104,7 +103,7 @@ class Login(BaseHandler):
                 cookie['user_id'] = vhandler.hash_cookie(user_id)
                 cookie['Path'] = '/'
                 self.set_cookie(**cookie)
-                self.redirect('/welcome')
+                self.redirect('/blog/welcome')
             else:
                 self.render('login.html', username = username)
         else:
@@ -113,9 +112,9 @@ class Login(BaseHandler):
 class Logout(BaseHandler):
     def get(self):
         self.response.headers.add_header('Set-Cookie','user_id=;Path=/')
-        self.redirect('/signup')
+        self.redirect('/blog/signup')
 
-app = webapp2.WSGIApplication([('/welcome', Welcome),
-                               ('/signup', SignUp),
-                               ('/login', Login),
-                               ('/logout', Logout)], debug=True)
+app = webapp2.WSGIApplication([('/blog/welcome', Welcome),
+                               ('/blog/signup', SignUp),
+                               ('/blog/login', Login),
+                               ('/blog/logout', Logout)], debug=True)
