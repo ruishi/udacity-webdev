@@ -6,6 +6,8 @@
 ################################################################################
 from google.appengine.ext import db
 from handler import BaseHandler
+import json
+import datetime
 
 class BlogPost(db.Model):
     """Datastore entity holding blog posts"""
@@ -17,6 +19,13 @@ class BlogPost(db.Model):
         handle = BaseHandler()
         self._render_post = self.post.replace('\n', '<br>')
         return handle.render_str('post.html', post=self)
+
+    def to_json(self):
+        post_dict = {}
+        post_dict['subject'] = self.title
+        post_dict['content'] = self.post
+        post_dict['created'] = self.created.strftime('%a %b %d %I:%M%p %Y')
+        return json.dumps(post_dict)
 
 class User(db.Model):
     """Datastore entity holding user information"""

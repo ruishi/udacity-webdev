@@ -11,6 +11,7 @@
 import webapp2
 from handler import BaseHandler
 from entities import BlogPost, User
+import json
 
 from google.appengine.ext import db
 
@@ -41,6 +42,22 @@ class Post(BaseHandler):
         blog_id = int(blog_id)
         self.render('permalink.html', post=BlogPost.get_by_id(blog_id))
 
+class JSONHandler(BaseHandler):
+    def get(self, blog_id = None):
+        self.response.headers['Content-Type'] = 'application/json'
+        if blog_id:
+            blog_id = int(blog_id)
+            post = BlogPost.get_by_id(blog_id)
+            self.write(post.to_json())
+        else:
+            posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
+            blog_list = []
+            for post in posts:
+                blog_list.append(post.to_json())
+            self.write(json.dumps(blog_list))
+
+
 app = webapp2.WSGIApplication([(r'/blog/?', Blog),
                                (r'/blog/newpost', WritePost),
-                               (r'/blog/(\d+)', Post)], debug=True)
+                               (r'/blog/(\d+)', Post),
+                               (r'/blog/(\d+)\.json|/blog/\.json', JSONHandler)], debug=True)
