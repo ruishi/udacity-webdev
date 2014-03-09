@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>RDG's Blog</title>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/blog.css">
+  </head>
+
+  <body>
+    {% for post in posts %}
+	{{post.render() | safe}}
+    {% endfor %}
+  </body>
+</html>

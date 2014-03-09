@@ -2,8 +2,8 @@ app.yaml
 index.yaml
 *.ico
 *.pyc
+templates/index.html
 static/
-templates/
-
+snapshots/
 main.py
 secret.py
