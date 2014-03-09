@@ -1,4 +1,5 @@
-*.yaml
+app.yaml
+index.yaml
 *.ico
 *.pyc
 static/

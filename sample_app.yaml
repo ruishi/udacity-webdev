@@ -1,0 +1,38 @@
+application: <your GAE appid here>
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /stylesheets
+  static_dir: static/css
+
+- url: /js
+  static_dir: static/js
+
+- url: /fonts
+  static_dir: static/fonts
+
+- url: /blog/(signup|welcome|login|logout)
+  script: register.app
+
+- url: /rot13
+  script: rot13.app
+
+- url: /blog/?.*
+  script: blog.app
+
+- url: /.*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
+
+- name: jinja2
+  version: "2.6"
+
+- name: pycrypto
+  version: "2.6"
+
