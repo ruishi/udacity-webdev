@@ -18,7 +18,10 @@
     {% block css %}{% endblock %}
   </head>
   <body>
-    {% block content %}{% endblock %}
+    <div id="wrap">
+      {% block content %}{% endblock %}
+      <div id="push"></div>
+    </div>
 
     <div id="footer">
       <div class="container">

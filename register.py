@@ -78,7 +78,7 @@ class SignUp(BaseHandler):
                                 salt = salt)
             new_user.put()
             user_id = str(new_user.key().id())
-            self.set_cookie(user_id=vhandler.hash_cookie(user_id), Path="/")
+            self.set_cookie(user_id=vhandler.hash_cookie(user_id))
             self.redirect('/blog/welcome')
         else:
             self.render('signup.html', **signup_params)
@@ -92,22 +92,26 @@ class Login(BaseHandler):
         username = self.request.get('username')
         password = self.request.get('password')
 
-        user = db.GqlQuery("SELECT * FROM User where username = :1", username).get()
+        user = db.GqlQuery("SELECT * FROM User where username = :1", 
+                           username).get()
         if user:
             correct_pw = vhandler.verifypw(user.pw_hash, user.salt, password)
             if correct_pw:
                 user_id = str(user.key().id())
-                self.set_cookie(user_id=vhandler.hash_cookie(user_id), Path="/")
+                self.set_cookie(user_id=vhandler.hash_cookie(user_id))
                 self.redirect('/blog/welcome')
             else:
-                self.render('login.html', error="Incorrect password.", username = username)
+                self.render('login.html', 
+                            error="Incorrect password.", 
+                            username = username)
         else:
-            self.render('login.html', error="Incorrect username.", username = username)
+            self.render('login.html', 
+                        error="Incorrect username.", 
+                        username = username)
 
 class Logout(BaseHandler):
     def get(self):
-        self.set_cookie(user_id="",Path="/")
-        #self.response.headers.add_header('Set-Cookie','user_id=;Path=/')
+        self.set_cookie(user_id="")
         self.redirect('/blog/signup')
 
 app = webapp2.WSGIApplication([('/blog/welcome', Welcome),
