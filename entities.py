@@ -24,9 +24,11 @@ class BlogPost(db.Model):
         post_dict = {}
         post_dict['subject'] = self.title
         post_dict['content'] = self.post
-        post_dict['created'] = self.created.strftime('%a %b %d %I:%M%p %Y')
+        post_dict['created'] = self.format_time('%a %b %d %I:%M%p %Y')
         return json.dumps(post_dict)
 
+    def format_time(self, fmt):
+        return self.created.strftime(fmt)
 class User(db.Model):
     """Datastore entity holding user information"""
     username = db.StringProperty(required = True)
