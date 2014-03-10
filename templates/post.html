@@ -4,12 +4,12 @@
 
 {% block content %}
   <div class="container-fluid">
-      <div class="col-md-offset-2 col-md-8">
+      <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8">
 	<p class="text-justify blog-title">{{post.title}}</p>
 	<hr>
 	<p class="text-right blog-date">Posted {{post.format_time("%B %e, %Y")}}</p>
       </div>
-      <div class="col-md-offset-2 col-md-8">
+      <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8">
 	<p class="text-justify blog-content">{{post._render_post | safe}}</p>
 	<div class="permalink">
 	  <a href="/blog/{{post.key().id()}}">permalink</a>
