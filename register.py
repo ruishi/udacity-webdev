@@ -25,14 +25,20 @@ def validemail(email):
     email_re = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
     return not email or email_re.match(email)
 
+def get_user(cookie):
+    if vhandler.verify_cookie(cookie):
+        user_id = int(cookie.split('|')[0])
+        user = User.get_by_id(user_id)
+        return user
+    return None
+        
 class Welcome(BaseHandler):
     """Handles '/welcome'. Welcomes user with their username, redirects
     if there is no username value."""
     def get(self):
         id_cookie = self.get_cookie('user_id')
-        if vhandler.verify_cookie(id_cookie):
-            user_id = int(id_cookie.split('|')[0])
-            user = User.get_by_id(user_id)
+        user = get_user(id_cookie)
+        if user:
             self.render('welcome.html', username = user.username)
         else:
             self.redirect('/blog/signup')

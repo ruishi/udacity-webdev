@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base-blog.html' %}
 {% block css %}<link href="/css/blog.css" rel="stylesheet">{% endblock %}
 {% block content %}
     {{post.render() | safe}}

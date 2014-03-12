@@ -14,14 +14,15 @@ from entities import BlogPost, User
 import json
 
 from google.appengine.ext import db
+import register
 
 class Blog(BaseHandler):
     def get(self):
         posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-        self.render('blog.html', posts=posts)
-
-    def post(self):
-        pass
+        user_cookie = self.get_cookie('user_id')
+        self.render('blog.html', 
+                    posts=posts, 
+                    user=register.get_user(user_cookie))
 
 class WritePost(BaseHandler):
     def get(self):
@@ -40,7 +41,10 @@ class WritePost(BaseHandler):
 class Post(BaseHandler):
     def get(self, blog_id):
         blog_id = int(blog_id)
-        self.render('permalink.html', post=BlogPost.get_by_id(blog_id))
+        user_cookie = self.get_cookie('user_id')
+        self.render('permalink.html', 
+                    post=BlogPost.get_by_id(blog_id), 
+                    user=register.get_user(user_cookie))
 
 class JSONHandler(BaseHandler):
     def get(self, blog_id = None):
@@ -51,10 +55,8 @@ class JSONHandler(BaseHandler):
             self.write(post.to_json())
         else:
             posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-            blog_list = []
-            for post in posts:
-                blog_list.append(post.to_json())
-            self.write(json.dumps(blog_list))
+            posts = list(posts)
+            self.write(json.dumps([post.to_json() for post in posts]))
 
 
 app = webapp2.WSGIApplication([(r'/blog/?', Blog),
