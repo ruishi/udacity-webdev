@@ -1,11 +1,9 @@
-<!DOCTYPE html>
+{% extends 'base-blog.html' %}
+{% block title %}Welcome!{% endblock %}
 
-<html>
-  <head>
-    <title>Welcome!</title>
-  </head>
-
-  <body>
-    <h1>Welcome, {{username}}!</h1>
-  </body>
-</html>
+{% block content %}
+  <div class="container">
+    <h1>Welcome, {{user.username}}!</h1>
+    You can now <a href="/blog/newpost">submit a new post</a> to the blog!
+  </div>
+{% endblock %}

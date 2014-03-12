@@ -1,19 +1,13 @@
-{% extends 'base.html' %}
-{% block title %}{{post.title}}{% endblock %}
-{% block css %}<link href="/css/blog.css" rel="stylesheet">{% endblock %}
-
-{% block content %}
-  <div class="container-fluid">
-      <div class="col-md-offset-2 col-md-8">
-	<p class="text-justify blog-title">{{post.title}}</p>
-	<hr>
-	<p class="text-right blog-date">Posted {{post.format_time("%B %e, %Y")}}</p>
-      </div>
-      <div class="col-md-offset-2 col-md-8">
-	<p class="text-justify blog-content">{{post._render_post | safe}}</p>
-	<div class="permalink">
-	  <a href="/blog/{{post.key().id()}}">permalink</a>
-	</div>
-      </div>
+<div class="container-fluid">
+  <div class="col-xs-12 col-md-offset-2 col-md-8">
+    <p class="blog-title">{{post.title}}</p>
+    <hr>
+    <p class="text-right blog-date">{{post.format_time("%B %e, %Y")}} by {{post.get_author()}}</p>
   </div>
-{% endblock %}
+  <div class="col-xs-12 col-md-offset-2 col-md-8">
+    <p class="text-justify blog-content">{{post._render_post | safe}}</p>
+    <div class="permalink">
+      <a href="/blog/{{post.key().id()}}">permalink</a>
+    </div>
+  </div>
+</div>

@@ -11,6 +11,7 @@
 import webapp2
 from handler import BaseHandler
 from entities import BlogPost, User
+from verification import CookieAuthentication
 import json
 
 from google.appengine.ext import db
@@ -18,21 +19,34 @@ from google.appengine.ext import db
 class Blog(BaseHandler):
     def get(self):
         posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-        self.render('blog.html', posts=posts)
-
-    def post(self):
-        pass
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
+        self.render('blog.html', posts=posts, user=user)
 
 class WritePost(BaseHandler):
     def get(self):
-        self.render('newpost.html')
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
+        self.render('newpost.html', user=user)
 
     def post(self):
         title = self.request.get('subject')
         post = self.request.get('content')
 
+        cookie = self.get_cookie('user_id')
+        authenticator = CookieAuthentication()
+        user = authenticator.authenticate(cookie)
         blogpost = BlogPost(title=title, 
-                            post=post)
+                            post=post,
+                            author_id=user.key().id())
 
         blogpost.put()
         self.redirect('/blog/%s' % str(blogpost.key().id()))
@@ -40,7 +54,15 @@ class WritePost(BaseHandler):
 class Post(BaseHandler):
     def get(self, blog_id):
         blog_id = int(blog_id)
-        self.render('permalink.html', post=BlogPost.get_by_id(blog_id))
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
+        self.render('permalink.html', 
+                    post=BlogPost.get_by_id(blog_id), 
+                    user=user)
 
 class JSONHandler(BaseHandler):
     def get(self, blog_id = None):
@@ -51,10 +73,8 @@ class JSONHandler(BaseHandler):
             self.write(post.to_json())
         else:
             posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-            blog_list = []
-            for post in posts:
-                blog_list.append(post.to_json())
-            self.write(json.dumps(blog_list))
+            posts = list(posts)
+            self.write(json.dumps([post.to_json() for post in posts]))
 
 
 app = webapp2.WSGIApplication([(r'/blog/?', Blog),

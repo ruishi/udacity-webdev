@@ -1,8 +1,9 @@
 #!usr/bin/env python
 ################################################################################
-#author: Steve Huffman
+#author: Steve Huffman/RD Galang
 #Steve Huffman's basehandler code, in a separate file for importing into
 #other applications
+#added by me: set_cookie(), get_cookie()
 ################################################################################
 import os
 
