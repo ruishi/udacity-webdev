@@ -13,6 +13,7 @@ class BlogPost(db.Model):
     """Datastore entity holding blog posts"""
     title = db.StringProperty(required = True)
     post = db.TextProperty(required = True)
+    author_id = db.IntegerProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
     def render(self):
@@ -24,11 +25,17 @@ class BlogPost(db.Model):
         post_dict = {}
         post_dict['subject'] = self.title
         post_dict['content'] = self.post
+        post_dict['author'] = self.get_author()
         post_dict['created'] = self.format_time('%a %b %d %I:%M%p %Y')
         return json.dumps(post_dict)
 
     def format_time(self, fmt):
         return self.created.strftime(fmt)
+    
+    def get_author(self):
+        user = User.get_by_id(self.author_id)
+        return user.username
+
 class User(db.Model):
     """Datastore entity holding user information"""
     username = db.StringProperty(required = True)

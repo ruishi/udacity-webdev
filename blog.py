@@ -41,8 +41,12 @@ class WritePost(BaseHandler):
         title = self.request.get('subject')
         post = self.request.get('content')
 
+        cookie = self.get_cookie('user_id')
+        authenticator = CookieAuthentication()
+        user = authenticator.authenticate(cookie)
         blogpost = BlogPost(title=title, 
-                            post=post)
+                            post=post,
+                            author_id=user.key().id())
 
         blogpost.put()
         self.redirect('/blog/%s' % str(blogpost.key().id()))
