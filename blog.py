@@ -11,22 +11,31 @@
 import webapp2
 from handler import BaseHandler
 from entities import BlogPost, User
+from verification import CookieAuthentication
 import json
 
 from google.appengine.ext import db
-import register
 
 class Blog(BaseHandler):
     def get(self):
         posts = db.GqlQuery("SELECT * FROM BlogPost ORDER BY created DESC LIMIT 10")
-        user_cookie = self.get_cookie('user_id')
-        self.render('blog.html', 
-                    posts=posts, 
-                    user=register.get_user(user_cookie))
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
+        self.render('blog.html', posts=posts, user=user)
 
 class WritePost(BaseHandler):
     def get(self):
-        self.render('newpost.html')
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
+        self.render('newpost.html', user=user)
 
     def post(self):
         title = self.request.get('subject')
@@ -41,10 +50,15 @@ class WritePost(BaseHandler):
 class Post(BaseHandler):
     def get(self, blog_id):
         blog_id = int(blog_id)
-        user_cookie = self.get_cookie('user_id')
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
         self.render('permalink.html', 
                     post=BlogPost.get_by_id(blog_id), 
-                    user=register.get_user(user_cookie))
+                    user=user)
 
 class JSONHandler(BaseHandler):
     def get(self, blog_id = None):

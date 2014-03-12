@@ -11,7 +11,8 @@ import webapp2
 from google.appengine.ext import db
 from handler import BaseHandler
 from entities import User
-import vhandler
+from verification import UserAuthentication, CookieAuthentication
+import verification as v
 
 def validusername(username):
     user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -24,22 +25,19 @@ def validpw(pw):
 def validemail(email):
     email_re = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
     return not email or email_re.match(email)
-
-def get_user(cookie):
-    if vhandler.verify_cookie(cookie):
-        user_id = int(cookie.split('|')[0])
-        user = User.get_by_id(user_id)
-        return user
-    return None
         
 class Welcome(BaseHandler):
     """Handles '/welcome'. Welcomes user with their username, redirects
     if there is no username value."""
     def get(self):
-        id_cookie = self.get_cookie('user_id')
-        user = get_user(id_cookie)
+        cookie = self.get_cookie('user_id')
+        if cookie:
+            authenticator = CookieAuthentication()
+            user = authenticator.authenticate(cookie)
+        else:
+            user = None
         if user:
-            self.render('welcome.html', username = user.username)
+            self.render('welcome.html', user = user)
         else:
             self.redirect('/blog/signup')
 
@@ -72,7 +70,7 @@ class SignUp(BaseHandler):
             form_error = True
 
         if not form_error:
-            pw_hash, salt = vhandler.hashpw(password)
+            pw_hash, salt = v.hashpw(password)
             if email:
                 new_user = User(username = username,
                                 pw_hash = pw_hash, 
@@ -84,7 +82,7 @@ class SignUp(BaseHandler):
                                 salt = salt)
             new_user.put()
             user_id = str(new_user.key().id())
-            self.set_cookie(user_id=vhandler.hash_cookie(user_id))
+            self.set_cookie(user_id=v.hash_cookie(user_id))
             self.redirect('/blog/welcome')
         else:
             self.render('signup.html', **signup_params)
@@ -101,10 +99,10 @@ class Login(BaseHandler):
         user = db.GqlQuery("SELECT * FROM User where username = :1", 
                            username).get()
         if user:
-            correct_pw = vhandler.verifypw(user.pw_hash, user.salt, password)
-            if correct_pw:
+            authenticator = UserAuthentication()
+            if authenticator.authenticate(user, password): 
                 user_id = str(user.key().id())
-                self.set_cookie(user_id=vhandler.hash_cookie(user_id))
+                self.set_cookie(user_id=v.hash_cookie(user_id))
                 self.redirect('/blog/welcome')
             else:
                 self.render('login.html', 
@@ -118,7 +116,7 @@ class Login(BaseHandler):
 class Logout(BaseHandler):
     def get(self):
         self.set_cookie(user_id="")
-        self.redirect('/blog/signup')
+        self.redirect('/blog/login')
 
 app = webapp2.WSGIApplication([('/blog/welcome', Welcome),
                                ('/blog/signup', SignUp),
