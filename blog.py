@@ -4,8 +4,7 @@
 #Lessons 3,4
 #An exercise in using google's datastore as well as more complex URL handling
 #and cookies
-#TODO: -Add error for leaving content and title blank in WritePost
-#      -Add error if post does not exist in Post
+#TODO: 
 ################################################################################
 
 import webapp2
@@ -35,7 +34,12 @@ class WritePost(BaseHandler):
             user = authenticator.authenticate(cookie)
         else:
             user = None
-        self.render('newpost.html', user=user)
+        if user:
+            self.render('newpost.html', user=user)
+        else:
+            self.render('newpost.html', 
+                        user=user, 
+                        error="You must be logged in to post")
 
     def post(self):
         title = self.request.get('subject')
@@ -44,12 +48,19 @@ class WritePost(BaseHandler):
         cookie = self.get_cookie('user_id')
         authenticator = CookieAuthentication()
         user = authenticator.authenticate(cookie)
-        blogpost = BlogPost(title=title, 
-                            post=post,
-                            author_id=user.key().id())
+        if not title or not post:
+            self.render('newpost.html', 
+                        title=title,
+                        post=post,
+                        user=user,
+                        error="A post requires both a title and content.")
+        else: 
+            blogpost = BlogPost(title=title, 
+                                post=post,
+                                author_id=user.key().id())
 
-        blogpost.put()
-        self.redirect('/blog/%s' % str(blogpost.key().id()))
+            blogpost.put()
+            self.redirect('/blog/%s' % str(blogpost.key().id()))
 
 class Post(BaseHandler):
     def get(self, blog_id):
