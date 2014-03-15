@@ -17,20 +17,22 @@ from entities import BlogPost, User
 from verification import CookieAuthentication
 
 def get_latest(update = False):
-    posts = memcache.get('latest')
+    key = 'latest'
+    query_key = 'lastquery:blog'
+    posts = memcache.get(key)
     if not posts or update:
-        logging.info("hit the DB")
         posts = db.GqlQuery('SELECT * '
                             'FROM BlogPost '
                             'ORDER BY created '
                             'DESC LIMIT 10')
         posts = list(posts)
-        memcache.set('latest', posts)
-        memcache.set('lastquery:blog', time.time())
+        memcache.set(key, posts)
+        memcache.set(query_key, time.time())
     return posts
 
 class Blog(BaseHandler):
     def get(self):
+        query_key = 'lastquery:blog'
         posts = get_latest()
         cookie = self.get_cookie('user_id')
         if cookie:
@@ -38,7 +40,11 @@ class Blog(BaseHandler):
             user = authenticator.authenticate(cookie)
         else:
             user = None
-        seconds = '{0:.2f}'.format(time.time() - memcache.get('lastquery:blog'))
+        querytime = memcache.get(query_key)
+        if querytime:
+            seconds = '{0:.2f}'.format(time.time() - memcache.get(query_key))
+        else:
+            seconds = 0
         self.render('blog.html', posts=posts, user=user, seconds=seconds)
 
 class WritePost(BaseHandler):
@@ -88,19 +94,21 @@ class Post(BaseHandler):
             user = authenticator.authenticate(cookie)
         else:
             user = None
-        querykey = 'lastquery:%s' % blog_id
-        seconds = '{0:.2f}'.format(time.time() - memcache.get(querykey))
+        query_key = 'lastquery:%s' % blog_id
+        seconds = '{0:.2f}'.format(time.time() - memcache.get(query_key))
         self.render('permalink.html', 
                     post=post, 
                     user=user,
                     seconds=seconds)
 
     def get_post(self, blog_id):
-        post = memcache.get('post:%s' % blog_id)
+        perma_key = 'post:%s' % blog_id
+        query_key = 'lastquery:%s' % blog_id
+        post = memcache.get(perma_key)
         if not post:
             post = BlogPost.get_by_id(blog_id)
-            memcache.set('post:%s' % blog_id, post)
-            memcache.set('lastquery:%s' % blog_id, time.time())
+            memcache.set(perma_key, post)
+            memcache.set(query_key, time.time())
         return post
                 
                 
