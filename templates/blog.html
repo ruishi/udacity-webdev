@@ -6,4 +6,7 @@
   {% for post in posts %}
     {{post.render() | safe}}
   {% endfor %}
+  <div class="container">
+    <p class="text-right"><small>Queried {{seconds}} seconds ago.</small></p>
+  </div>
 {% endblock %}
