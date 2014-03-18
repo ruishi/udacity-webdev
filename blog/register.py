@@ -1,15 +1,12 @@
-#!/usr/bin/env python
 ################################################################################
 #Lesson 2, Part 2
 #author: RD Galang
 #An exercise in conserving submitted user data in case of invalid input for
 #user convenience.
 ################################################################################
-
 import re
-import webapp2
 from google.appengine.ext import db
-from handler import BaseHandler
+from utils.handler import BaseHandler
 from entities import User
 from verification import UserAuthentication, CookieAuthentication
 import verification as v
@@ -87,7 +84,6 @@ class SignUp(BaseHandler):
         else:
             self.render('signup.html', **signup_params)
 
-
 class Login(BaseHandler):
     def get(self):
         self.render('login.html')
@@ -117,8 +113,3 @@ class Logout(BaseHandler):
     def get(self):
         self.set_cookie(user_id="")
         self.redirect('/blog/login')
-
-app = webapp2.WSGIApplication([('/blog/welcome', Welcome),
-                               ('/blog/signup', SignUp),
-                               ('/blog/login', Login),
-                               ('/blog/logout', Logout)], debug=True)

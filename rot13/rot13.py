@@ -8,8 +8,7 @@
 
 import string
 
-import webapp2
-from handler import BaseHandler
+from utils.handler import BaseHandler
 
 class Rot13(BaseHandler):
     """Handles '/rot13' which creates a rot13 converter."""
@@ -35,5 +34,3 @@ class Rot13(BaseHandler):
                     c = loweralpha[(loweralpha.find(c) + 13) % 26]
             final += c
         return final
-
-app = webapp2.WSGIApplication([('/rot13', Rot13)], debug=True)
