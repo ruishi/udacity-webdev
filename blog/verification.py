@@ -5,10 +5,9 @@
 #Handles salting and hashing passwords, cookie hashing, and cookie and 
 #password verification.
 ################################################################################
-
 from Crypto.Random.random import StrongRandom
 from Crypto.Hash import SHA256
-import secret
+import utils.secret as secret
 from entities import User
 
 def generate_salt():

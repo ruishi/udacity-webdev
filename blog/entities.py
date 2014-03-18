@@ -5,7 +5,7 @@
 #An exercise in setting/getting cookies as well as cookie and password hashing.
 ################################################################################
 from google.appengine.ext import db
-from handler import BaseHandler
+from utils.handler import BaseHandler
 import json
 import datetime
 

@@ -1,4 +1,3 @@
-#!usr/bin/env python
 ################################################################################
 #author: RD Galang
 #Lessons 3,4
@@ -6,13 +5,12 @@
 #and cookies
 #TODO: 
 ################################################################################
-import webapp2
 from google.appengine.api import memcache
 from google.appengine.ext import db
 import json
 import logging, time
 
-from handler import BaseHandler
+from utils.handler import BaseHandler
 from entities import BlogPost, User
 from verification import CookieAuthentication
 
@@ -84,7 +82,7 @@ class WritePost(BaseHandler):
             get_latest(True)
             self.redirect('/blog/%s' % str(blogpost.key().id()))
             
-class Post(BaseHandler):
+class Permalink(BaseHandler):
     def get(self, blog_id):
         blog_id = int(blog_id)
         post = self.get_post(blog_id)
@@ -129,10 +127,3 @@ class FlushCache(BaseHandler):
     def get(self):
         memcache.flush_all()
         self.redirect('/blog')
-
-
-app = webapp2.WSGIApplication([(r'/blog/?', Blog),
-                               (r'/blog/newpost', WritePost),
-                               (r'/blog/(\d+)', Post),
-                               (r'/blog/(\d+)\.json|/blog/\.json', JSONHandler),
-                               (r'/blog/flush/?', FlushCache)], debug=True)
