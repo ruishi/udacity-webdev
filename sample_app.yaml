@@ -14,17 +14,14 @@ handlers:
 - url: /fonts
   static_dir: static/fonts
 
-- url: /blog/(signup|welcome|login|logout)
-  script: register.app
-
 - url: /rot13
-  script: rot13.app
+  script: routes.r13app
 
 - url: /blog/?.*
-  script: blog.app
+  script: routes.blogapp
 
 - url: /.*
-  script: main.app
+  script: routes.app
 
 libraries:
 - name: webapp2
