@@ -7,6 +7,7 @@
 
 from verification import validusername, validemail, validpw
 from handler import BaseHandler
+from entities import User
 
 class Signup(BaseHandler):
     """Handles '/signup'. Form ensures a valid username, password and ensures 
@@ -39,7 +40,15 @@ class Signup(BaseHandler):
         if form_error:
             self.render('signup.html', **self.signup_params)
         else:
-            self.done()
+            user = User.get_by_name(self.username)
+            if user:
+                self.signup_params['uname_error'] = "That username already exists"
+                self.render('signup.html', **self.signup_params)
+            else:
+                new_user = User.register(self.username, self.password, self.email)
+                new_user.put()
+                self.set_login_cookie(new_user)
+                self.done()
             
     def done(self):
         raise NotImplementedError
