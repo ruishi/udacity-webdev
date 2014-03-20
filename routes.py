@@ -13,7 +13,7 @@ import main
 app = WSGIApplication([('/', main.MainPage)], debug=True)
 r13app = WSGIApplication([(r'/rot13', rot13.Rot13)], debug=True)
 blogapp = WSGIApplication([(r'/blog/welcome', r.Welcome),
-                           (r'/blog/signup', r.SignUp),
+                           (r'/blog/signup', r.Register),
                            (r'/blog/login', r.Login),
                            (r'/blog/logout', r.Logout),
                            (r'/blog/?', b.Blog),

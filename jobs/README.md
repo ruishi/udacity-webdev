@@ -1,1 +1,0 @@
-Wrappers and RSS parsers for job search sites.

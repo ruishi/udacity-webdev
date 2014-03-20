@@ -5,6 +5,7 @@
 #Handles salting and hashing passwords, cookie hashing, and cookie and 
 #password verification.
 ################################################################################
+import re
 from Crypto.Random.random import StrongRandom
 from Crypto.Hash import SHA256
 import secret as secret

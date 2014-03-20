@@ -1,12 +1,12 @@
 #!usr/bin/env python
 ################################################################################
 #author: RD Galang
-#Lessons 3, 4
-#An exercise in setting/getting cookies as well as cookie and password hashing.
+#an exercise in using the datastore and creating JSON output
 ################################################################################
 from google.appengine.ext import db
 import json
 import datetime
+from utils.entities import User
 
 class BlogPost(db.Model):
     """Datastore entity holding blog posts"""
@@ -35,10 +35,3 @@ class BlogPost(db.Model):
     def get_author(self):
         user = User.get_by_id(self.author_id)
         return user.username
-
-class User(db.Model):
-    """Datastore entity holding user information"""
-    username = db.StringProperty(required = True)
-    pw_hash = db.StringProperty(required = True)
-    salt = db.StringProperty(required = True)
-    email = db.StringProperty()

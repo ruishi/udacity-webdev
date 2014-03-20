@@ -11,7 +11,8 @@ import json
 import logging, time
 
 from utils.handler import BaseHandler
-from entities import BlogPost, User
+from entities import BlogPost
+from utils.entities import User
 
 def get_latest(update = False):
     key = 'latest'
@@ -34,7 +35,8 @@ class Blog(BaseHandler):
         user = self.check_login_status()
         querytime = memcache.get(query_key)
         if querytime:
-            seconds = '{0:.2f}'.format(time.time() - memcache.get(query_key))
+            seconds = '{0:.2f}'.format(time.time() - 
+                                       memcache.get(query_key))
         else:
             seconds = 0
         self.render('blog.html', posts=posts, user=user, seconds=seconds)

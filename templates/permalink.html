@@ -1,12 +1,14 @@
 {% extends 'base-blog.html' %}
+{% block title %}{{post.title}}{% endblock %}
 {% block css %}<link href="/css/blog.css" rel="stylesheet">{% endblock %}
 {% block content %}
     {{post.render() | safe}}
-    <div class="container-fluid">
-      <div class="col-xs-12 col-md-offset-2 col-md-8">
-	<p class="text-right">
-	  <small>Queried {{seconds}} seconds ago.</small>
-	</p>
-      </div>
-    </div>
+{% endblock %}
+
+{% block bottom_content %}
+  <div class="container">
+    <p class="text-right">
+      <small>Queried {{seconds}} seconds ago.</small>
+    </p>
+  </div>
 {% endblock %}

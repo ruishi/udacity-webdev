@@ -1,17 +1,17 @@
-#!usr/bin/env python
 ################################################################################
 #author: Steve Huffman/RD Galang
 #Steve Huffman's basehandler code, in a separate file for importing into
 #other applications
-#added by me: set_cookie(), get_cookie()
+#added by me: set_cookie(), get_cookie(), check_login_status(), 
+#set_login_cookie()
 ################################################################################
 import os
 
 import webapp2
 import jinja2
 
-from verification import verify_cookie
-from blog.entities import User
+from verification import verify_cookie, hash_cookie
+from entities import User
 
 template_dir = os.path.join(os.path.dirname(__file__), 
                             os.path.pardir,
@@ -48,3 +48,6 @@ class BaseHandler(webapp2.RequestHandler):
             user = None
         return user
     
+    def set_login_cookie(self, user):
+        user_id = str(user.key().id())
+        self.set_cookie(user_id=hash_cookie(user_id))
