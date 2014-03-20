@@ -25,8 +25,9 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
 	{% if user %}
-	<p class="navbar-text navbar-right">{{user.username}} |
-	<a href="/blog/logout">Logout</a></p>
+	  <p class="navbar-text navbar-right">
+            {{user.username}} | <a href="/blog/logout">Logout</a>
+          </p>
 	{% else %}
 	<p class="navbar-text navbar-right"><a href="/blog/signup">Signup</a> | 
 	<a href="/blog/login">Login</a></p>
