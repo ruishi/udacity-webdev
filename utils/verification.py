@@ -9,6 +9,18 @@ from Crypto.Random.random import StrongRandom
 from Crypto.Hash import SHA256
 import secret as secret
 
+def validusername(username):
+    user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+    return user_re.match(username)
+
+def validpw(pw):
+    pw_re = re.compile(r"^.{3,20}$")
+    return pw_re.match(pw)
+
+def validemail(email):
+    email_re = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
+    return not email or email_re.match(email)
+
 def generate_salt():
     rand = StrongRandom()
     return str(rand.getrandbits(256))
