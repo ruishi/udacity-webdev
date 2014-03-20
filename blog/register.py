@@ -8,8 +8,7 @@ import re
 from google.appengine.ext import db
 from utils.handler import BaseHandler
 from entities import User
-from verification import UserAuthentication, CookieAuthentication
-import verification as v
+import utils.verification as v
 
 def validusername(username):
     user_re = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -27,12 +26,7 @@ class Welcome(BaseHandler):
     """Handles '/welcome'. Welcomes user with their username, redirects
     if there is no username value."""
     def get(self):
-        cookie = self.get_cookie('user_id')
-        if cookie:
-            authenticator = CookieAuthentication()
-            user = authenticator.authenticate(cookie)
-        else:
-            user = None
+        user = self.check_login_status()
         if user:
             self.render('welcome.html', user = user)
         else:

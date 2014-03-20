@@ -10,6 +10,9 @@ import os
 import webapp2
 import jinja2
 
+from verification import verify_cookie
+from blog.entities import User
+
 template_dir = os.path.join(os.path.dirname(__file__), 
                             os.path.pardir,
                             'templates')
@@ -36,4 +39,12 @@ class BaseHandler(webapp2.RequestHandler):
     def get_cookie(self, name):
         return self.request.cookies.get(name)
 
+    def check_login_status(self):
+        cookie = self.get_cookie('user_id')
+        if cookie and verify_cookie(cookie):
+            user_id = int(cookie.split('|')[0])
+            user = User.get_by_id(user_id)
+        else:
+            user = None
+        return user
     

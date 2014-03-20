@@ -5,7 +5,6 @@
 #An exercise in setting/getting cookies as well as cookie and password hashing.
 ################################################################################
 from google.appengine.ext import db
-from utils.handler import BaseHandler
 import json
 import datetime
 
@@ -17,6 +16,7 @@ class BlogPost(db.Model):
     created = db.DateTimeProperty(auto_now_add = True)
 
     def render(self):
+        from utils.handler import BaseHandler
         handle = BaseHandler()
         self._render_post = self.post.replace('\n', '<br>')
         return handle.render_str('post.html', post=self)

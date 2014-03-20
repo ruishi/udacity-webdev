@@ -12,7 +12,6 @@ import logging, time
 
 from utils.handler import BaseHandler
 from entities import BlogPost, User
-from verification import CookieAuthentication
 
 def get_latest(update = False):
     key = 'latest'
@@ -32,12 +31,7 @@ class Blog(BaseHandler):
     def get(self):
         query_key = 'lastquery:blog'
         posts = get_latest()
-        cookie = self.get_cookie('user_id')
-        if cookie:
-            authenticator = CookieAuthentication()
-            user = authenticator.authenticate(cookie)
-        else:
-            user = None
+        user = self.check_login_status()
         querytime = memcache.get(query_key)
         if querytime:
             seconds = '{0:.2f}'.format(time.time() - memcache.get(query_key))
@@ -47,12 +41,7 @@ class Blog(BaseHandler):
 
 class WritePost(BaseHandler):
     def get(self):
-        cookie = self.get_cookie('user_id')
-        if cookie:
-            authenticator = CookieAuthentication()
-            user = authenticator.authenticate(cookie)
-        else:
-            user = None
+        user = self.check_login_status()
         if user:
             self.render('newpost.html', user=user)
         else:
@@ -61,12 +50,10 @@ class WritePost(BaseHandler):
                         error="You must be logged in to post")
 
     def post(self):
+        user = self.check_login_status()
+ 
         title = self.request.get('subject')
         post = self.request.get('content')
-
-        cookie = self.get_cookie('user_id')
-        authenticator = CookieAuthentication()
-        user = authenticator.authenticate(cookie)
         if not title or not post:
             self.render('newpost.html', 
                         title=title,
@@ -86,12 +73,7 @@ class Permalink(BaseHandler):
     def get(self, blog_id):
         blog_id = int(blog_id)
         post = self.get_post(blog_id)
-        cookie = self.get_cookie('user_id')
-        if cookie:
-            authenticator = CookieAuthentication()
-            user = authenticator.authenticate(cookie)
-        else:
-            user = None
+        user = self.check_login_status()
         query_key = 'lastquery:%s' % blog_id
         seconds = '{0:.2f}'.format(time.time() - memcache.get(query_key))
         self.render('permalink.html', 

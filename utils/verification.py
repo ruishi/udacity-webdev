@@ -7,8 +7,7 @@
 ################################################################################
 from Crypto.Random.random import StrongRandom
 from Crypto.Hash import SHA256
-import utils.secret as secret
-from entities import User
+import secret as secret
 
 def generate_salt():
     rand = StrongRandom()
@@ -34,36 +33,3 @@ def verify_cookie(cookie):
         return cookie == hash_cookie(cookie_val)
     else:
         return False
-
-class CookieAuthentication():
-    def authenticate(self, cookie):
-        """Checks for and verifies session cookie
-
-        Keyword arguments:
-        cookie -- user_id cookie
-        
-        Returns User object if a user is logged in 
-        or None if no user is logged in"""
-
-        if cookie and verify_cookie(cookie):
-            user_id = int(cookie.split('|')[0])
-            user = User.get_by_id(user_id)
-            return user
-        return None
-
-class UserAuthentication():
-    """Handles user authentication based on uesrname and password"""
-
-    def authenticate(self, user, password):
-        """Verifies password against password hash in database.
-
-        Keyword arguments:
-        user - User datastore object
-        password - password entered by user
-
-        Returns bool"""
-        salt = user.salt
-        correct_hash = user.pw_hash
-        new_hash = hashpw(password, salt)[0]
-        return correct_hash == new_hash
-
