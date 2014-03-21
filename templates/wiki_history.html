@@ -1,0 +1,42 @@
+{% extends 'base-wiki.html' %}
+
+{% block title %}
+{% if pages %}
+{% if pages[0].page_name == '/' %}
+Edit Front Page
+{% else %}
+Edit {{pages[0].page_name}}
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if pages %}
+  {% if pages[0].page_name == '/' %}
+    {% set pg_name = "" %}
+  {% else %}
+    {% set pg_name = pages[0].page_name %}
+  {% endif %}
+{% endif %}
+<div class="container">
+  <div class="col-xs-12 col-md-8 col-md-offset-2">
+    <table class="table table-striped table-bordered">
+      <tr>
+        <td><strong>Created</strong></td>
+        <td><strong>Author</strong></td>
+        <td><strong>Content</strong></td>
+        <td><strong>Actions</strong></td>
+      </tr>
+      {% for page in pages %}
+      <tr>
+        <td>{{page.format_date()}}</td>
+        <td>{{page.get_author()}}</td>
+        <td>{{page.content[0:100]}}</td>
+        <td><a href="/wiki/{{pg_name}}?v={{loop.index}}">view</a>&nbsp;&nbsp;
+          <a href="/wiki/_edit/{{pg_name}}?v={{loop.index}}">edit</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

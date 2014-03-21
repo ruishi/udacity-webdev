@@ -29,12 +29,15 @@
 	<p class="navbar-text navbar-right">
 	{% if user %}
           {% if page %}
-            {% set name = page.key().name() %}
+            {% if view %}
+              {% set v = "?v=%s" % view %}
+            {% endif %}
+            {% set name = page.page_name %}
             {% if name == '/' %}
-              <a href="/wiki/_edit">edit</a> |
+              <a href="/wiki/_edit{{v}}">edit</a> |
               <a href="/wiki/_history">history</a>
             {% else %}
-              <a href="/wiki/_edit/{{name}}">edit</a> | 
+              <a href="/wiki/_edit/{{name}}{{v}}">edit</a> | 
               <a href="/wiki/_history/{{name}}">history</a>
             {% endif %}
           {% endif %}

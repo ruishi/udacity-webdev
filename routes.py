@@ -32,5 +32,6 @@ wikiapp = WSGIApplication([(r'/wiki/welcome', wr.Welcome),
                            (r'/wiki/login', wr.Login),
                            (r'/wiki/logout', wr.Logout),
                            (r'/wiki/_edit/?' + page_re, w.EditPage), 
+                           (r'/wiki/_history/?' + page_re, w.PageHistory),
                            (r'/wiki/?' + page_re, w.WikiPage)],
                           debug=True)
