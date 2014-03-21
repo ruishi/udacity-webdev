@@ -14,14 +14,28 @@ class EditPage(BaseHandler):
             if not view:
                 page = Page.get_by_key_name('/')
             else:
-                pages = HistoryItem.get_by_page_name('/')
-                page = pages[int(view) - 1]
+                if view.isdigit():
+                    view = int(view)
+                    pages = HistoryItem.get_by_page_name('/')
+                    if view <= len(pages):
+                        page = pages[int(view) - 1]
+                    else:
+                        self.abort(404)
+                else:
+                    self.abort(404)
         else:
             if not view:
                 page = Page.get_by_key_name(page_name)
             else:
-                pages = HistoryItem.get_by_page_name(page_name)
-                page = pages[int(view) - 1]
+                if view.isdigit():
+                    view = int(view)
+                    pages = HistoryItem.get_by_page_name(page_name)
+                    if view <= len(pages):
+                        page = pages[int(view) - 1]
+                    else:
+                        self.abort(404)
+                else:
+                    self.abort(404)
         self.render('wiki_edit.html', page=page, user=user)
 
     def post(self, page_name):
@@ -62,14 +76,27 @@ class WikiPage(BaseHandler):
             if not view:
                 page = Page.get_by_key_name('/')
             else:
-                pages = HistoryItem.get_by_page_name('/')
-                page = pages[int(view) - 1]
+                if view.isdigit():
+                    view = int(view)
+                    pages = HistoryItem.get_by_page_name('/')
+                    if view <= len(pages):
+                        page = pages[view - 1]
+                    else:
+                        self.abort(404)
+                else:
+                    self.abort(404)
         else:
             if not view:
                 page = Page.get_by_key_name(page_name)
             else:
-                pages = HistoryItem.get_by_page_name(page_name)
-                page = pages[int(view) - 1]
+                if view.isdigit():
+                    view = int(view)
+                    pages = HistoryItem.get_by_page_name(page_name)
+                    if view <= len(pages):
+                        page = pages[view - 1]
+                    else: self.abort(404)
+                else:
+                    self.abort(404)
 
         if not page and page_name:
             self.redirect('/wiki/_edit/%s' % page_name)
