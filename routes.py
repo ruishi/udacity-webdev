@@ -26,8 +26,11 @@ blogapp = WSGIApplication([(r'/blog/welcome', br.Welcome),
                            (r'/blog/(\d+)\.json|/blog/\.json', b.JSONHandler),
                            (r'/blog/flush/?', b.FlushCache)], debug=True)
 
-wikiapp = WSGIApplication([(r'/wiki/?', w.Front),
-                           (r'/wiki/welcome', wr.Welcome),
+page_re = r'([a-zA-Z0-9_-]+/?)*'
+wikiapp = WSGIApplication([(r'/wiki/welcome', wr.Welcome),
                            (r'/wiki/signup', wr.Register),
                            (r'/wiki/login', wr.Login),
-                           (r'/wiki/logout', wr.Logout)], debug=True)
+                           (r'/wiki/logout', wr.Logout),
+                           (r'/wiki/_edit/?' + page_re, w.EditPage), 
+                           (r'/wiki/?' + page_re, w.WikiPage)],
+                          debug=True)
