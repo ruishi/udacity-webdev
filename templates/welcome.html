@@ -4,6 +4,14 @@
 {% block content %}
   <div class="container">
     <h1>Welcome, {{user.username}}!</h1>
-    You can now <a href="/blog/newpost">submit a new post</a> to the blog!
+    You can now 
+    {% if app == 'blog' %}
+    <a href="/blog/newpost">submit a new post</a> to the blog!<br>
+    You also have editing access to our <a href="/wiki">wiki</a> service!
+    {% else %}
+    edit or add pages on the wiki!<br>
+    As a bonus, we've also given you access to our 
+    <a href="/blog">blog</a> service!
+    {% endif %}
   </div>
 {% endblock %}

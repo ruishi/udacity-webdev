@@ -15,21 +15,13 @@ class Welcome(BaseHandler):
     def get(self):
         user = self.check_login_status()
         if user:
-            self.render('welcome.html', user = user)
+            self.render('welcome.html', user=user, app='blog')
         else:
             self.redirect('/blog/signup')
 
 class Register(Signup):
     def done(self):
-        user = User.get_by_name(self.username)
-        if user:
-            self.signup_params['uname_error'] = "That username already exists"
-            self.render('signup.html', **self.signup_params)
-        else:
-            new_user = User.register(self.username, self.password, self.email)
-            new_user.put()
-            self.set_login_cookie(new_user)
-            self.redirect('/blog/welcome')
+        self.redirect('/blog/welcome')
 
 
 class Login(BaseHandler):
