@@ -7,8 +7,9 @@ from google.appengine.ext import db
 import json
 import datetime
 from utils.entities import User
+from utils.handler import BaseHandler
 
-class BlogPost(db.Model):
+class BlogPost(db.Model, BaseHandler):
     """Datastore entity holding blog posts"""
     title = db.StringProperty(required = True)
     post = db.TextProperty(required = True)
@@ -17,9 +18,8 @@ class BlogPost(db.Model):
 
     def render(self):
         from utils.handler import BaseHandler
-        handle = BaseHandler()
         self._render_post = self.post.replace('\n', '<br>')
-        return handle.render_str('post.html', post=self)
+        return self.render_str('post.html', post=self)
 
     def to_json(self):
         post_dict = {}
@@ -31,7 +31,7 @@ class BlogPost(db.Model):
 
     def format_time(self, fmt):
         return self.created.strftime(fmt)
-    
+
     def get_author(self):
         user = User.get_by_id(self.author_id)
         return user.username
